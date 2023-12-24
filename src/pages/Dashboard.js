@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import ExpSideBar from "../components/dashboardComponents/ExpSideBar";
 
-const ExperiemntPage = () => {
+const Dashboard = () => {
   const [sidebarOpen, setSidebarOpen] = useState(false);
   
   return (
@@ -32,4 +32,4 @@ const ExperiemntPage = () => {
     </div>
   )
 }
-export default ExperiemntPage;
+export default Dashboard;

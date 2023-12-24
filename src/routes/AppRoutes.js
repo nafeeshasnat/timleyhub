@@ -1,7 +1,7 @@
 import { BrowserRouter as Router, Routes, Route, Navigate } from "react-router-dom";
 import HomePage from "../pages/HomePage";
 import LoginPage from "../pages/LoginPage";
-import ExperiemntPage from "../pages/ExperimentsPage";
+import Dashboard from "../pages/Dashboard";
 import { useState } from "react";
 // Import other pages as needed
 
@@ -14,7 +14,7 @@ const AppRoutes = () => {
         <Route path="/login" element={<LoginPage onLogin={() => setIsLoggedIn(true)} />} />
         <Route 
           path="/experiments" 
-          element={isLoggedIn ? <ExperiemntPage /> : <Navigate to="/login" />} 
+          element={isLoggedIn ? <Dashboard /> : <Navigate to="/login" />} 
         />
       </Routes>
     </Router>
