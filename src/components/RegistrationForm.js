@@ -82,6 +82,21 @@ const RegistrationForm = ({ onToggleForm }) => {
           />
         </div>
 
+        <div>
+          <label htmlFor="companyName" className="block text-sm font-medium leading-6 text-gray-900">
+            Company Name
+          </label>
+          <input
+            id="companyName"
+            name="companyName"
+            type="text"
+            required
+            className="mt-2 block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm focus:ring-2 focus:ring-indigo-600"
+            placeholder="Company Name"
+            onChange={onChange}
+          />
+        </div>
+
         {/* Password */}
         <div>
           <label htmlFor="password" className="block text-sm font-medium leading-6 text-gray-900">

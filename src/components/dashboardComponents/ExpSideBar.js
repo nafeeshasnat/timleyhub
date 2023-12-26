@@ -2,8 +2,16 @@ import React, { useEffect, useRef, useState } from "react"
 import { NavLink, useLocation } from "react-router-dom"
 import Logo from "../../icons/optimize-logo.png"
 import SidebarLinkGroup from "./SidebarLinkGroup"
+import { useSelector } from 'react-redux';
 
 const ExpSideBar = ({ sidebarOpen, setSidebarOpen }) => {
+  let userPath = '';
+  const user = useSelector((state) => state.user.userDetails);
+  if(user != null){
+    console.log(user);
+    userPath = user.firstName.toLowerCase();
+  }
+
   const location = useLocation()
   const { pathname } = location
 
@@ -59,7 +67,7 @@ const ExpSideBar = ({ sidebarOpen, setSidebarOpen }) => {
     >
       {/* <!-- SIDEBAR HEADER --> */}
       <div className="flex items-center justify-between gap-2 px-6 py-5.5 py-6 bm-sidebar">
-        <NavLink to="/">
+        <NavLink to={`/${userPath}/`}>
           <img src={Logo} alt="Logo" />
         </NavLink>
 
@@ -107,7 +115,7 @@ const ExpSideBar = ({ sidebarOpen, setSidebarOpen }) => {
                   return (
                     <React.Fragment>
                       <NavLink
-                        to="#"
+                        to={`/${userPath}/`}
                         className={`group relative flex items-center gap-2.5 rounded-sm py-2 px-4 font-medium text-slate-50 duration-300 ease-in-out hover:bg-graydark dark:hover:bg-meta-4 ${(pathname ===
                           "/" ||
                           pathname.includes("dashboard")) &&
@@ -144,7 +152,7 @@ const ExpSideBar = ({ sidebarOpen, setSidebarOpen }) => {
                             fill=""
                           />
                         </svg>
-                        Dashboard
+                        Projects
                         <svg
                           className={`absolute right-4 top-1/2 -translate-y-1/2 fill-current ${open &&
                             "rotate-180"}`}
@@ -170,13 +178,24 @@ const ExpSideBar = ({ sidebarOpen, setSidebarOpen }) => {
                         <ul className="mt-4 mb-5 flex flex-col gap-2.5 pl-6">
                           <li>
                             <NavLink
-                              to="/"
+                              to={`/${userPath}/new-project`}
                               className={({ isActive }) =>
                                 "group relative flex items-center gap-2.5 rounded-md px-4 font-medium text-slate-400 duration-300 ease-in-out hover:text-white " +
                                 (isActive && "!text-white")
                               }
                             >
-                              eCommerce
+                              Add New
+                            </NavLink>
+                          </li>
+                          <li>
+                            <NavLink
+                              to={`/${userPath}/all-projects`}
+                              className={({ isActive }) =>
+                                "group relative flex items-center gap-2.5 rounded-md px-4 font-medium text-slate-400 duration-300 ease-in-out hover:text-white " +
+                                (isActive && "!text-white")
+                              }
+                            >
+                              All Projects
                             </NavLink>
                           </li>
                         </ul>

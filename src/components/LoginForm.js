@@ -1,9 +1,12 @@
 import React, { useState } from 'react';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
+import { useDispatch } from 'react-redux';
+import { loginSuccess } from '../features/userSlice';
 
 
 const LoginForm = ({ onToggleForm, onLoginSuccess }) => {
+  const dispatch = useDispatch();
   const navigate = useNavigate();
   const [formData, setFormData] = useState({});
 
@@ -14,9 +17,12 @@ const LoginForm = ({ onToggleForm, onLoginSuccess }) => {
     try {
       const res = await axios.post('http://localhost:5001/api/users/login', formData);
       if (res.data) {
-        console.log(res.data);
+        console.log(res.data.userDetails);
         onLoginSuccess(); // Call the callback prop on successful login
-        navigate('/experiments');
+        dispatch(loginSuccess(res.data.userDetails));
+        const companyName = res.data.userDetails.firstName.toLowerCase();
+        
+        navigate(`/${companyName}`);
       }
       // Handle login success
     } catch (err) {
