@@ -5,7 +5,7 @@ import { useDispatch } from 'react-redux';
 import { loginSuccess } from '../features/userSlice';
 
 
-const LoginForm = ({ onToggleForm, onLoginSuccess }) => {
+const LoginForm = ({ onToggleForm }) => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const [formData, setFormData] = useState({});
@@ -18,7 +18,6 @@ const LoginForm = ({ onToggleForm, onLoginSuccess }) => {
       const res = await axios.post('http://localhost:5001/api/users/login', formData);
       if (res.data) {
         console.log(res.data.userDetails);
-        onLoginSuccess(); // Call the callback prop on successful login
         dispatch(loginSuccess(res.data.userDetails));
         const companyName = res.data.userDetails.firstName.toLowerCase();
         

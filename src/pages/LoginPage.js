@@ -4,7 +4,7 @@ import LoginForm from '../components/LoginForm';
 import RegistrationForm from '../components/RegistrationForm';
 // Import any additional components you might need
 
-const LoginPage = ({ onLogin }) => {
+const LoginPage = () => {
   
   const [showLoginForm, setShowLoginForm] = useState(true); // State to control form display
 
@@ -26,7 +26,7 @@ const LoginPage = ({ onLogin }) => {
         </div>
 
         {showLoginForm ? (
-          <LoginForm onToggleForm={toggleForm} onLoginSuccess={onLogin} />
+          <LoginForm onToggleForm={toggleForm} />
         ) : (
           <RegistrationForm onToggleForm={toggleForm} />
         )}

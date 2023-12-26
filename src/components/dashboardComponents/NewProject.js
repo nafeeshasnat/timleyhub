@@ -1,55 +1,51 @@
-import React, { useState } from 'react';
-import { useSelector } from 'react-redux';
+import React, { useState, useEffect } from 'react';
+import { useSelector, useDispatch } from 'react-redux';
+import { updateFormValues, updateTask, addTask, removeTask } from '../../features/projectFormSlice';
 
 const NewProject = () => {
   const user = useSelector((state) => state.user.userDetails);
   const userID = user._id;
+  const dispatch = useDispatch();
+  const formValues = useSelector((state) => state.projectForm);
 
   const [billable, setBillable] = useState(false);
 
-  const [formValues, setFormValues] = useState({
-    clientName: '',
-    projectName: '',
-    projectTimeBudget: 0,
-    isBillable: false,
-    tasks: [{ name: '', budget: '', isBillable: false }],
-    isRecurring: false,
-  });
+  useEffect(() => {
+    // Initialize form values on component mount
+    dispatch(updateFormValues({
+      clientName: '',
+      projectName: '',
+      projectTimeBudget: 0,
+      isBillable: false,
+      tasks: [{ name: '', budget: '', isBillable: false }],
+      isRecurring: false,
+    }));
+  }, [dispatch]);
+
   const [errors, setErrors] = useState({});
   
   const handleInputChange = (e) => {
-    const { name, value, type, checked } = e.target;
-    const val = type === 'checkbox' ? checked : value;
-    setFormValues({ ...formValues, [name]: val });
+    const { name, value, type, checked, className } = e.target;
+    console.log(className)
+    dispatch(updateFormValues({ [name]: type === 'checkbox' ? checked : value }));
   };
+
+  console.log(formValues)
 
   const handleTaskChange = (index, e) => {
-    const updatedTasks = [...formValues.tasks];
     const { name, value, type, checked } = e.target;
-    updatedTasks[index][name] = type === 'checkbox' ? checked : value;
-    setFormValues({ ...formValues, tasks: updatedTasks });
+    dispatch(updateTask({ index, task: { [name]: type === 'checkbox' ? checked : value } }));
   };
 
-  const addTask = () => {
-    setFormValues({
-      ...formValues,
-      tasks: [...formValues.tasks, { name: '', budget: '', isBillable: false }]
-    });
+   // Add a new task
+   const handleAddTask = () => {
+    dispatch(addTask());
   };
 
-  const removeTask = (index) => {
-    const updatedTasks = formValues.tasks.filter((_, taskIndex) => index !== taskIndex);
-    setFormValues({ ...formValues, tasks: updatedTasks });
+  // Remove a task
+  const handleRemoveTask = (index) => {
+    dispatch(removeTask(index));
   };
-
-  // const handleSubmit = (e) => {
-  //   e.preventDefault();
-  //   // Validation logic here...
-  //   if (Object.keys(errors).length === 0) {
-  //     console.log('Form submitted', formValues);
-  //     // API call to backend to save the project
-  //   }
-  // };
 
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -186,7 +182,7 @@ const NewProject = () => {
                   <div className="flex justify-center items-center col-span-1">
                     <button
                       type="button"
-                      onClick={() => removeTask(index)}
+                      onClick={() => handleRemoveTask(index)}
                       className="text-red-500 hover:text-red-700"
                     >
                       X
@@ -198,7 +194,7 @@ const NewProject = () => {
             ))}
             <button
               type="button"
-              onClick={addTask}
+              onClick={handleAddTask}
               className="text-sm text-blue-500"
             >
               + Add a Task

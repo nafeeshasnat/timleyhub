@@ -1,5 +1,6 @@
 import { useState } from "react";
 import EditModal from "./EditModal";
+import NewProject from "./NewProject";
 
 const ProjectDetails = (project) => {
   const [editModal, setEditModal] = useState(false);
@@ -19,7 +20,7 @@ const ProjectDetails = (project) => {
       <button onClick={toggleModal}>Edit</button>
       <button>Delete</button>
       {editModal && <EditModal openModal = {editModal} closeModal={closeModal}>
-        <h1>Hi</h1>
+        <NewProject />
       </EditModal>}
     </div>
   )
