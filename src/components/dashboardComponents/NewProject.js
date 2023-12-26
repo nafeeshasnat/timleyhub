@@ -2,7 +2,11 @@ import React, { useState, useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { updateFormValues, updateTask, addTask, removeTask } from '../../features/projectFormSlice';
 
-const NewProject = () => {
+const NewProject = (props) => {
+  const isUpdate = props.updateProject;
+  if(isUpdate){
+    var initialProjectDataToUpdate = props.projectData.projectData;
+  }
   const user = useSelector((state) => state.user.userDetails);
   const userID = user._id;
   const dispatch = useDispatch();
@@ -29,8 +33,6 @@ const NewProject = () => {
     console.log(className)
     dispatch(updateFormValues({ [name]: type === 'checkbox' ? checked : value }));
   };
-
-  console.log(formValues)
 
   const handleTaskChange = (index, e) => {
     const { name, value, type, checked } = e.target;

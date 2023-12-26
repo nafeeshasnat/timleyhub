@@ -20,7 +20,7 @@ const ProjectDetails = (project) => {
       <button onClick={toggleModal}>Edit</button>
       <button>Delete</button>
       {editModal && <EditModal openModal = {editModal} closeModal={closeModal}>
-        <NewProject />
+        <NewProject updateProject={true} projectData={project}/>
       </EditModal>}
     </div>
   )
