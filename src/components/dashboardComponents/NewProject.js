@@ -1,36 +1,46 @@
 import React, { useState, useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { updateFormValues, updateTask, addTask, removeTask } from '../../features/projectFormSlice';
+import { projectUpdate } from '../../features/AllProjectsSlice';
+import { useNavigate } from 'react-router-dom';
 
 const NewProject = (props) => {
-  const isUpdate = props.updateProject;
+  const isUpdate = props.updateProject || false;
+  let initialProjectDataToUpdate;
+
   if(isUpdate){
-    var initialProjectDataToUpdate = props.projectData.projectData;
+    initialProjectDataToUpdate = props.projectData.projectData;
   }
   const user = useSelector((state) => state.user.userDetails);
   const userID = user._id;
+  const userName = user.firstName;
   const dispatch = useDispatch();
   const formValues = useSelector((state) => state.projectForm);
 
   const [billable, setBillable] = useState(false);
 
+  const navigate = useNavigate();
+
   useEffect(() => {
     // Initialize form values on component mount
     dispatch(updateFormValues({
-      clientName: '',
-      projectName: '',
-      projectTimeBudget: 0,
-      isBillable: false,
-      tasks: [{ name: '', budget: '', isBillable: false }],
-      isRecurring: false,
+      clientName: isUpdate ? initialProjectDataToUpdate.clientName : '',
+      projectName: isUpdate ? initialProjectDataToUpdate.projectName : '',
+      projectTimeBudget: isUpdate ? initialProjectDataToUpdate.projectTimeBudget : 0,
+      isBillable: isUpdate ? initialProjectDataToUpdate.isBillable : false,
+      tasks: isUpdate ? initialProjectDataToUpdate.tasks.map(task => ({
+        name: task.name,
+        budget: task.budget,
+        isBillable: task.isBillable
+      })) : [{ name: '', budget: '', isBillable: false }],
+      isRecurring: isUpdate ? initialProjectDataToUpdate.isRecurring : false,
     }));
   }, [dispatch]);
 
   const [errors, setErrors] = useState({});
   
   const handleInputChange = (e) => {
-    const { name, value, type, checked, className } = e.target;
-    console.log(className)
+    const { name, value, type, checked } = e.target;
     dispatch(updateFormValues({ [name]: type === 'checkbox' ? checked : value }));
   };
 
@@ -58,10 +68,16 @@ const NewProject = (props) => {
       ...formValues,
       admin: userID,
     };
+
+    const url = isUpdate
+    ? `http://localhost:5001/api/projects/update/${initialProjectDataToUpdate._id}`
+    : 'http://localhost:5001/api/projects/new';
+
+    const method = isUpdate ? 'PUT' : 'POST';
   
     // Send the POST request to the backend
-    fetch('http://localhost:5001/api/projects/new', { // Replace with your actual backend server URL
-      method: 'POST',
+    fetch( url, { // Replace with your actual backend server URL
+      method: method,
       headers: {
         'Content-Type': 'application/json',
       },
@@ -69,8 +85,11 @@ const NewProject = (props) => {
     })
     .then(response => response.json())
     .then(data => {
-      console.log('Success:', data);
-      // Handle success - perhaps redirecting to the dashboard or clearing the form
+      if (isUpdate) {
+        dispatch(projectUpdate(true)); // Dispatch action after successful update
+      }else{
+        navigate(`/${userName}/all-projects`)
+      }
     })
     .catch((error) => {
       console.error('Error:', error);
@@ -226,7 +245,7 @@ const NewProject = (props) => {
               type="submit"
               className="px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-700"
             >
-              Save Project
+              {isUpdate ? 'Update Project' : 'Save Project'}
             </button>
           </div>
         </div>
