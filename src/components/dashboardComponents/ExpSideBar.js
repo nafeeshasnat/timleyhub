@@ -63,7 +63,7 @@ const ExpSideBar = ({ sidebarOpen, setSidebarOpen }) => {
       ref={sidebar}
       className={`absolute max-w-305 left-0 top-0 z-9999 flex h-screen w-1/4 flex-col overflow-y-hidden bg-slate-900 duration-300 ease-linear dark:bg-boxdark lg:static lg:translate-x-0 ${
         sidebarOpen ? "translate-x-0" : "-translate-x-full"
-      }`}
+      } shadow-blue-900 shadow-2xl z-10`}
     >
       {/* <!-- SIDEBAR HEADER --> */}
       <div className="flex items-center justify-between gap-2 px-6 py-5.5 py-6 bm-sidebar">
@@ -210,7 +210,7 @@ const ExpSideBar = ({ sidebarOpen, setSidebarOpen }) => {
               {/* <!-- Menu Item Calendar --> */}
               <li>
                 <NavLink
-                  to="/calendar"
+                  to={`/${userPath}/time-tracker`}
                   className={`group relative flex items-center gap-2.5 rounded-sm py-2 px-4 font-medium text-slate-50 duration-300 ease-in-out hover:bg-graydark dark:hover:bg-meta-4 ${pathname.includes(
                     "calendar"
                   ) && "bg-graydark dark:bg-meta-4"}`}
@@ -228,7 +228,7 @@ const ExpSideBar = ({ sidebarOpen, setSidebarOpen }) => {
                       fill=""
                     />
                   </svg>
-                  Calendar
+                  Hour Tracker
                 </NavLink>
               </li>
               {/* <!-- Menu Item Calendar --> */}

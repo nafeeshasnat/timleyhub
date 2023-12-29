@@ -10,11 +10,11 @@ const Dashboard = () => {
       {/* <!-- ===== Page Wrapper Start ===== --> */}
       <div className="flex h-screen overflow-hidden">
         {/* <!-- ===== Sidebar Start ===== --> */}
-        <ExpSideBar sidebarOpen={sidebarOpen} setSidebarOpen={setSidebarOpen} />
+        <ExpSideBar sidebarOpen={sidebarOpen} setSidebarOpen={setSidebarOpen}/>
         {/* <!-- ===== Sidebar End ===== --> */}
 
         {/* <!-- ===== Content Area Start ===== --> */}
-        <div className="relative flex flex-1 flex-col overflow-y-auto overflow-x-hidden bm-sidebar">
+        <div className="relative flex flex-1 flex-col overflow-y-auto overflow-x-hidden bm-sidebar bg-slate-200">
           {/* <!-- ===== Header Start ===== --> */}
           {/* <Header sidebarOpen={sidebarOpen} setSidebarOpen={setSidebarOpen} /> */}
           {/* <!-- ===== Header End ===== --> */}

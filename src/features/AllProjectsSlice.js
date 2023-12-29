@@ -14,9 +14,12 @@ export const AllProjectsSlice = createSlice({
     },
     projectUpdate: (state, action) => {
       state.updated = action.payload;
+    },
+    projectDelete: (state, action) => {
+      state.deletedID = action.payload;
     }
   }
 });
 
-export const { projectsStorage, projectUpdate } = AllProjectsSlice.actions;
+export const { projectsStorage, projectUpdate, projectDelete } = AllProjectsSlice.actions;
 export default AllProjectsSlice.reducer;

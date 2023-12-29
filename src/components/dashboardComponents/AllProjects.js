@@ -6,6 +6,7 @@ import { projectsStorage } from '../../features/AllProjectsSlice';
 const AllProjects = () => {
   const dispatch = useDispatch();
   const user = useSelector((state) => state.user.userDetails);
+  const deletedProjectID = useSelector((state) => state.allProjects.deletedID);
   const userID = user._id;
   const projects = useSelector((state) => state.allProjects.projects);
   const [openProjectId, setOpenProjectId] = useState(null);
@@ -24,7 +25,7 @@ const AllProjects = () => {
       .catch(error => {
         console.error('Error fetching projects:', error);
       });
-  }, [userID, projectUpdateState, dispatch]);
+  }, [userID, projectUpdateState, deletedProjectID, dispatch]);
 
   const convertToLocalTime = (time) => {
     return new Date(time).toLocaleString();
@@ -44,7 +45,7 @@ const AllProjects = () => {
       <ul role="list" className="divide-y divide-gray-100">
       {projects.map((project, index) => (
         <>
-        <li key={index} className={`flex justify-between gap-x-6 py-5 cursor-pointer duration-300 ease-in-out hover:bg-gray-200 px-4 ${openProjectId === index ? "bg-gray-200 rounded-t-xl" : "hover:rounded-xl"}`} onClick={(e) => toggleProject(index, e)}>
+        <li key={index} project-id={index} className={`flex justify-between gap-x-6 py-5 cursor-pointer duration-300 ease-in-out hover:bg-gray-200 px-4 ${openProjectId === index ? "bg-gray-200 rounded-t-xl" : "hover:rounded-xl"}`} onClick={(e) => toggleProject(index, e)}>
           <div className="flex min-w-0 gap-x-4">
             <div className="min-w-0 flex-auto">
               <p className="text-sm font-semibold leading-6 text-gray-900">{project.clientName}</p>
@@ -67,7 +68,7 @@ const AllProjects = () => {
           )}
         </li>
         {openProjectId === index && (
-          <div className="translate transform overflow-hidden">
+          <div className="translate transform overflow-hidden" details-of={index}>
             <h3>Project Details</h3>
             <ProjectDetails projectData={project} />
           </div>
