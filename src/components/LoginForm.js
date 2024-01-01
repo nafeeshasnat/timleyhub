@@ -17,9 +17,10 @@ const LoginForm = ({ onToggleForm }) => {
     try {
       const res = await axios.post('http://localhost:5001/api/users/login', formData);
       if (res.data) {
-        console.log(res.data.userDetails);
-        dispatch(loginSuccess(res.data.userDetails));
-        const companyName = res.data.userDetails.firstName.toLowerCase();
+        const userDetils = res.data.user || res.data.employee;
+        console.log(userDetils);
+        dispatch(loginSuccess(userDetils));
+        const companyName = userDetils.firstName.toLowerCase();
         
         navigate(`/${companyName}`);
       }

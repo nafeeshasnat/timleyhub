@@ -4,6 +4,7 @@ import LoginPage from "../pages/LoginPage";
 import Dashboard from "../pages/Dashboard";
 // import { useState } from "react";
 import { useSelector } from 'react-redux';
+import AcceptInvite from "../pages/AcceptInvite";
 // Import other pages as needed
 
 const AppRoutes = () => {
@@ -27,6 +28,7 @@ const AppRoutes = () => {
           path={`/${userPath}/*`}
           element={isLoggedIn ? <Dashboard /> : <Navigate to="/login" />} 
         />
+        <Route path="/accept-invitation/:invitationToken" element={<AcceptInvite/>}/>
       </Routes>
     </Router>
   );

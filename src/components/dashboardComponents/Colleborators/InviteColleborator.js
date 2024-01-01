@@ -6,6 +6,8 @@ const InviteColleborator = () => {
   const userID = user._id;
   const [inviteState, setInviteState] = useState('false');
 
+  console.log(user);
+
   const [formData, setFormData] = useState({
     firstName: '',
     lastName: '',
@@ -25,6 +27,7 @@ const InviteColleborator = () => {
     const collabooratorData = {
       ...formData,
       companyId: userID,
+      companyURLName: user.companyURLName
     };
 
     console.log(collabooratorData);
