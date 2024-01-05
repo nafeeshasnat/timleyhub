@@ -4,6 +4,7 @@ import { StaticDatePicker } from '@mui/x-date-pickers/StaticDatePicker';
 import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFns';
 import TextField from '@mui/material/TextField';
 import { useSelector, useDispatch } from 'react-redux';
+import TimeEntry from './TimeEntry';
 
 
 const MainTracker = () => {
@@ -21,14 +22,7 @@ const MainTracker = () => {
   const [showTaskOptions, setShowTaskOptions] = useState(false);
   const projectDropdownRef = useRef(null);
   const taskDropdownRef = useRef(null);
-  const [projects, setProjects] = useState([])
-
-  // Replace this with your actual projects and tasks data
-  // const projects = [
-  //   { id: 1, name: 'Project A', tasks: [{ id: 'a1', name: 'Task A1' }, { id: 'a2', name: 'Task A2' }] },
-  //   { id: 2, name: 'Project B', tasks: [{ id: 'b1', name: 'Task B1' }, { id: 'b2', name: 'Task B2' }] },
-  //   // ... more projects
-  // ];
+  const [projects, setProjects] = useState([]);
 
   const tasks = selectedProject ? selectedProject.tasks : [];
 
@@ -52,6 +46,9 @@ const MainTracker = () => {
   const [minutes, setMinutes] = useState('');
   const [text, setText] = useState('');
 
+  const formattedDate = selectedDate.toISOString().split('T')[0];
+
+
   // Handler for hours and minutes input
   // Ensures that only numerical values are entered and within a reasonable range
   const handleTimeInput = (e, type) => {
@@ -71,7 +68,7 @@ const MainTracker = () => {
 
   // get the available projects
   useEffect(() => {
-    fetch(`http://localhost:5001/api/projects?adminId=${userID}`)
+    fetch(`http://localhost:5001/api/users/projects/${userID}`)
       .then(response => response.json())
       .then(data => {
         console.log(data)
@@ -81,6 +78,60 @@ const MainTracker = () => {
         console.error('Error fetching projects:', error);
       });
   }, []);
+  
+  const [timeEntries, setTimeEntries] = useState([]); // State to hold time entries
+
+   // Get TIme
+  const fetchTimeEntries = () => {
+    fetch(`http://localhost:5001/api/time-entries/timecards/${userID}/${formattedDate}`)
+      .then(response => response.json())
+      .then(data => {
+        setTimeEntries(data);
+      })
+      .catch(error => {
+        console.error('Error fetching time entries:', error);
+      });
+  };
+
+   // Fetch time entries when the selected date changes
+   useEffect(() => {
+    fetchTimeEntries();
+  }, [selectedDate]);
+
+  // save time
+  const saveTimeEntry = () => {
+    const timeEntryData = {
+      employeeId: userID, // or however you get the employee ID
+      projectId: selectedProject._id,
+      taskId: selectedTask._id,
+      date: selectedDate,
+      enteredHoure: hours, // Ensure this is a number
+      enteredMinutes: minutes,
+      comment: text,
+      // ...other fields if necessary
+    };
+
+    setTimeEntries([...timeEntries, timeEntryData]);
+  
+    fetch('http://localhost:5001/api/time-entries/time', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify(timeEntryData)
+    })
+    .then(response => response.json())
+    .then(data => {
+      console.log('Time entry saved:', data);
+      setShowProjectOptions(null);
+      fetchTimeEntries();
+    })
+    .catch((error) => {
+      console.error('Error saving time entry:', error);
+    });
+  };
+
+  console.log(timeEntries)
 
   return(
     <div>
@@ -190,8 +241,14 @@ const MainTracker = () => {
         </div>
 
         <div className="mt-4">
-          <button className='px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-700'>Save</button>
+          <button className='px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-700' onClick={saveTimeEntry}>Save</button>
         </div>
+      </div>
+      {/* Render Time Entries */}
+      <div className="time-entries">
+        {timeEntries.map((entry, index) => (
+          <TimeEntry key={index} {...entry} />
+        ))}
       </div>
     </div>
   )
