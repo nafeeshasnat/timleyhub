@@ -1,168 +1,124 @@
-import React, {useState, useEffect, useRef} from 'react';
-import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
-import { StaticDatePicker } from '@mui/x-date-pickers/StaticDatePicker';
+import React, { useState, useEffect, useRef } from 'react';
+import { LocalizationProvider, StaticDatePicker } from '@mui/x-date-pickers';
 import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFns';
 import TextField from '@mui/material/TextField';
-import { useSelector, useDispatch } from 'react-redux';
+import { useSelector } from 'react-redux';
 import TimeEntry from './TimeEntry';
 
-
 const MainTracker = () => {
-  const [selectedDate, setSelectedDate] = React.useState(new Date());
+  const [selectedDate, setSelectedDate] = useState(new Date());
   const user = useSelector((state) => state.user.userDetails);
   const userID = user._id;
-
-  const handleDateChange = (date) => {
-    setSelectedDate(date);
-  };
 
   const [selectedProject, setSelectedProject] = useState(null);
   const [selectedTask, setSelectedTask] = useState(null);
   const [showProjectOptions, setShowProjectOptions] = useState(false);
   const [showTaskOptions, setShowTaskOptions] = useState(false);
-  const projectDropdownRef = useRef(null);
-  const taskDropdownRef = useRef(null);
   const [projects, setProjects] = useState([]);
-
-  const tasks = selectedProject ? selectedProject.tasks : [];
-
-  useEffect(() => {
-    const handleClickOutside = (event) => {
-      if (projectDropdownRef.current && !projectDropdownRef.current.contains(event.target)) {
-        setShowProjectOptions(false);
-      }
-      if (taskDropdownRef.current && !taskDropdownRef.current.contains(event.target)) {
-        setShowTaskOptions(false);
-      }
-    };
-
-    document.addEventListener("mousedown", handleClickOutside);
-    return () => {
-      document.removeEventListener("mousedown", handleClickOutside);
-    };
-  }, [projectDropdownRef, taskDropdownRef]);
+  const [timeEntries, setTimeEntries] = useState([]);
+  const [timeSave, setTimeSave] = useState(false);
 
   const [hours, setHours] = useState('');
   const [minutes, setMinutes] = useState('');
   const [text, setText] = useState('');
+  const [forceUpdateKey, setForceUpdateKey] = useState(0);
 
-  const formattedDate = selectedDate.toISOString().split('T')[0];
+  const projectDropdownRef = useRef(null);
+  const taskDropdownRef = useRef(null);
 
-
-  // Handler for hours and minutes input
-  // Ensures that only numerical values are entered and within a reasonable range
-  const handleTimeInput = (e, type) => {
-    const value = e.target.value;
-
-    // If the input is not a number, return early
-    if (!/^\d*$/.test(value)) return;
-
-    if (type === 'hours') {
-      // If the hours are more than 24, reset to 24
-      setHours(value <= 24 ? value : 24);
-    } else if (type === 'minutes') {
-      // If the minutes are more than 59, reset to 59
-      setMinutes(value <= 59 ? value : 59);
-    }
-  };
-
-  // get the available projects
   useEffect(() => {
-    fetch(`http://localhost:5001/api/users/projects/${userID}`)
-      .then(response => response.json())
-      .then(data => {
-        console.log(data)
-        setProjects(data)
-      })
-      .catch(error => {
-        console.error('Error fetching projects:', error);
-      });
-  }, []);
-  
-  const [timeEntries, setTimeEntries] = useState([]); // State to hold time entries
+      fetch(`http://localhost:5001/api/users/projects/${userID}`)
+          .then(response => response.json())
+          .then(setProjects)
+          .catch(error => console.error('Error fetching projects:', error));
+  }, [userID]);
 
-   // Get TIme
+  useEffect(() => {
+      fetchTimeEntries();
+      setTimeSave(false);
+  }, [selectedDate, userID, timeSave]);
+  
   const fetchTimeEntries = () => {
+    const formattedDate = selectedDate.toISOString().split('T')[0];
     fetch(`http://localhost:5001/api/time-entries/timecards/${userID}/${formattedDate}`)
       .then(response => response.json())
-      .then(data => {
-        setTimeEntries(data);
-      })
-      .catch(error => {
-        console.error('Error fetching time entries:', error);
-      });
+      .then(setTimeEntries)
+      .catch(error => console.error('Error fetching time entries:', error));
   };
 
-   // Fetch time entries when the selected date changes
-   useEffect(() => {
-    fetchTimeEntries();
-  }, [selectedDate]);
+  const handleDateChange = (newDate) => setSelectedDate(newDate);
 
-  // save time
+  const handleInput = (e, type) => {
+      const value = e.target.value;
+      if (!/^\d*$/.test(value)) return;
+
+      if (type === 'hours') {
+          setHours(value <= 24 ? value : 24);
+      } else if (type === 'minutes') {
+          setMinutes(value <= 59 ? value : 59);
+      }
+  };
+
   const saveTimeEntry = () => {
     const timeEntryData = {
-      employeeId: userID, // or however you get the employee ID
+      employeeId: userID,
       projectId: selectedProject._id,
       taskId: selectedTask._id,
       date: selectedDate,
-      enteredHoure: hours, // Ensure this is a number
+      enteredHours: hours,
       enteredMinutes: minutes,
       comment: text,
-      // ...other fields if necessary
     };
-
-    setTimeEntries([...timeEntries, timeEntryData]);
   
     fetch('http://localhost:5001/api/time-entries/time', {
       method: 'POST',
-      headers: {
-        'Content-Type': 'application/json'
-      },
+      headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(timeEntryData)
     })
     .then(response => response.json())
     .then(data => {
       console.log('Time entry saved:', data);
-      setShowProjectOptions(null);
+      // Optionally, clear the input fields here if needed
+      setHours('');
+      setMinutes('');
+      setText('');
       fetchTimeEntries();
+      // Fetch updated time entries
+      return fetch(`http://localhost:5001/api/time-entries/timecards/${userID}/${selectedDate.toISOString().split('T')[0]}`)
     })
-    .catch((error) => {
+    .then(response => response.json())
+    .then(newTimeEntries => {
+      setTimeEntries(newTimeEntries); // Update state with new time entries
+      setTimeSave(true);
+      setForceUpdateKey(prevKey => prevKey + 1);
+    })
+    .catch(error => {
       console.error('Error saving time entry:', error);
     });
-  };
+  };  
 
-  console.log(timeEntries)
-
-  return(
+  return (
     <div>
       <h1>Time Tracker</h1>
       <LocalizationProvider dateAdapter={AdapterDateFns}>
-      <StaticDatePicker
+        <StaticDatePicker
           label="Date picker"
           inputFormat="MM/dd/yyyy"
           value={selectedDate}
           onChange={handleDateChange}
-          orientation="landscape"xs
+          orientation="landscape"
           renderInput={(params) => <TextField {...params} />}
-          slotProps={{
-            actionBar: {
-              actions: [''],
-            },
-          }}
         />
       </LocalizationProvider>
 
       <div>
-
         <h3>Select a Project</h3>
-
         <div ref={projectDropdownRef} className="relative">
           <div
             onClick={() => setShowProjectOptions(!showProjectOptions)}
             className="w-full border border-gray-300 rounded-md py-2 px-4 bg-white cursor-pointer"
           >
             {selectedProject ? `${selectedProject.clientName} : ${selectedProject.projectName}` : "Select a project"}
-            {/* Dropdown icon */}
           </div>
           {showProjectOptions && (
             <ul className="absolute z-10 w-full bg-white border border-gray-300 mt-1 rounded-md max-h-60 overflow-auto">
@@ -172,7 +128,7 @@ const MainTracker = () => {
                   className="px-4 py-2 hover:bg-gray-100 cursor-pointer"
                   onClick={() => {
                     setSelectedProject(project);
-                    setSelectedTask(null); // Reset the selected task
+                    setSelectedTask(null);
                     setShowProjectOptions(false);
                   }}
                 >
@@ -183,18 +139,17 @@ const MainTracker = () => {
           )}
         </div>
 
-        {/* Task Selector */}
+        <h3>Select a Task</h3>
         <div ref={taskDropdownRef} className="relative mt-4">
           <div
             onClick={() => setShowTaskOptions(!showTaskOptions)}
             className="w-full border border-gray-300 rounded-md py-2 px-4 bg-white cursor-pointer"
           >
             {selectedTask ? selectedTask.name : "Select a task"}
-            {/* Dropdown icon */}
           </div>
           {showTaskOptions && (
             <ul className="absolute z-10 w-full bg-white border border-gray-300 mt-1 rounded-md max-h-60 overflow-auto">
-              {tasks.map((task) => (
+              {selectedProject && selectedProject.tasks.map((task) => (
                 <li
                   key={task.id}
                   className="px-4 py-2 hover:bg-gray-100 cursor-pointer"
@@ -211,26 +166,21 @@ const MainTracker = () => {
         </div>
 
         <div className="flex space-x-2 items-center mt-4">
-          {/* Hours Input */}
           <input
             type="text"
             value={hours}
-            onChange={(e) => handleTimeInput(e, 'hours')}
+            onChange={(e) => handleInput(e, 'hours')}
             placeholder="Hours"
             className="border border-gray-300 rounded-md py-2 px-4 w-24"
           />
-
           <span>:</span>
-
-          {/* Minutes Input */}
           <input
             type="text"
             value={minutes}
-            onChange={(e) => handleTimeInput(e, 'minutes')}
+            onChange={(e) => handleInput(e, 'minutes')}
             placeholder="Minutes"
             className="border border-gray-300 rounded-md py-2 px-4 w-24"
           />
-
           <input
             type="text"
             value={text}
@@ -240,18 +190,18 @@ const MainTracker = () => {
           />
         </div>
 
-        <div className="mt-4">
-          <button className='px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-700' onClick={saveTimeEntry}>Save</button>
-        </div>
+        <button onClick={saveTimeEntry} className="px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-700">
+          Save
+        </button>
       </div>
-      {/* Render Time Entries */}
+
       <div className="time-entries">
-        {timeEntries.map((entry, index) => (
-          <TimeEntry key={index} {...entry} />
-        ))}
+      {timeEntries.map((entry) => (
+          <TimeEntry key={`${entry._id}-${forceUpdateKey}`} {...entry} />
+      ))}
       </div>
     </div>
-  )
-}
+  );
+};
 
 export default MainTracker;
