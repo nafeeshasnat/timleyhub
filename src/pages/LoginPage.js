@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import optimizeLogo from '../icons/optimize-logo.png';
+import SiteIcon from '../icons/timelyhub.png';
 import LoginForm from '../components/LoginForm';
 import RegistrationForm from '../components/RegistrationForm';
 // Import any additional components you might need
@@ -17,7 +17,7 @@ const LoginPage = () => {
         <div className="sm:mx-auto sm:w-full sm:max-w-sm">
           <a href="/"><img
             className="mx-auto h-15 w-auto"
-            src={optimizeLogo}
+            src={SiteIcon}
             alt="Your Company"
           /></a>
           <h2 className="mt-10 text-center text-2xl font-bold leading-9 tracking-tight text-gray-900">

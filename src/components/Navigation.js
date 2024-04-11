@@ -1,12 +1,14 @@
 import React, { useState } from 'react';
 import { Dialog } from '@headlessui/react';
 import { Bars3Icon, XMarkIcon } from '@heroicons/react/24/outline';
-import optimizeLogo from '../icons/optimize-logo.png'
+import siteLogo from '../icons/timelyhub.png';
 
 const navigation = [
-  { name: 'Product', href: '#' },
-  { name: 'Features', href: '#' },
-  { name: 'Marketplace', href: '#' },
+  { name: 'Features', href: '#features-section' },
+  { name: 'How Works', href: '#how-it-works' },
+  { name: 'Privacy & Security', href: '#security-privacy' },
+  { name: 'Pricing', href: '#pricing' },
+  { name: 'Contact Us', href: '#contact'},
 ];
 
 const Navigation = () => {
@@ -17,13 +19,13 @@ const Navigation = () => {
 
   return (
     <header className="absolute inset-x-0 top-0 z-50">
-        <nav className="flex items-center justify-between p-6 lg:px-8" aria-label="Global">
+        <nav className="flex items-center justify-between p-6 lg:px-8 backdrop-blur fixed w-full" aria-label="Global">
           <div className="flex lg:flex-1">
             <a href="/" className="-m-1.5 p-1.5">
               <span className="sr-only">Optimize Pulses</span>
               <img
                 className="h-20 w-auto"
-                src={optimizeLogo}
+                src={siteLogo}
                 alt=""
               />
             </a>
@@ -59,7 +61,7 @@ const Navigation = () => {
                 <span className="sr-only">Your Company</span>
                 <img
                   className="h-8 w-auto"
-                  src="https://tailwindui.com/img/logos/mark.svg?color=indigo&shade=600"
+                  src={siteLogo}
                   alt=""
                 />
               </a>
