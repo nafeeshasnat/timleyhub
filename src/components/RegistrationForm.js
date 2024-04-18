@@ -10,6 +10,7 @@ const RegistrationForm = ({ onToggleForm }) => {
   });
 
   // const { firstName, lastName, email, password } = formData;
+  const [showSuccessPopup, setShowSuccessPopup] = useState(false);
 
   const onChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -21,6 +22,8 @@ const RegistrationForm = ({ onToggleForm }) => {
       const res = await axios.post('http://localhost:5001/api/users/signup', formData);
       console.log(res.data);
       // Handle success
+      setShowSuccessPopup(true);
+      // window.location.href = `/login?email=${encodeURIComponent(formData.email)}`;
     } catch (err) {
       console.error(err);
       // Optionally, check if response property exists
@@ -31,8 +34,27 @@ const RegistrationForm = ({ onToggleForm }) => {
       }
     }
   };
+
+  const handleBeginClick = () => {
+    window.location.href = `/login?email=${encodeURIComponent(formData.email)}`;
+  };
+
   return (
     <div className="mt-10 sm:mx-auto sm:w-full sm:max-w-sm">
+    {showSuccessPopup && (
+        <div className="fixed inset-0 bg-gray-600 bg-opacity-50 flex justify-center items-center">
+          <div className="bg-white p-8 rounded-lg shadow-lg max-w-[80vw] text-center">
+            <h2 className="text-xl font-semibold text-gray-900">Registration Successful!</h2>
+            <p className="mt-2 text-gray-600">Welcome to Timelyhub.</p>
+            <button
+              onClick={handleBeginClick}
+              className="mt-8 bg-indigo-600 text-white rounded px-4 py-2 hover:bg-indigo-700 focus:outline-none"
+            >
+              Let's Begin
+            </button>
+          </div>
+        </div>
+      )}
       <form className="space-y-6" onSubmit={onSubmit}>
         {/* Full Name */}
         <div>

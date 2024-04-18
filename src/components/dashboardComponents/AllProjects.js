@@ -40,42 +40,43 @@ const AllProjects = () => {
   };
 
   return(
-    <div className="all-projects">
-      <h2>All Projects</h2>
-      <ul role="list" className="divide-y divide-gray-100">
-      {projects.map((project, index) => (
-        <>
-        <li key={index} project-id={index} className={`flex justify-between gap-x-6 py-5 cursor-pointer duration-300 ease-in-out hover:bg-gray-200 px-4 ${openProjectId === index ? "bg-gray-200 rounded-t-xl" : "hover:rounded-xl"}`} onClick={(e) => toggleProject(index, e)}>
-          <div className="flex min-w-0 gap-x-4">
-            <div className="min-w-0 flex-auto">
-              <p className="text-sm font-semibold leading-6 text-gray-900">{project.clientName}</p>
-              <p className="mt-1 truncate text-xs leading-5 text-gray-500">{project.projectName}</p>
-            </div>
-          </div>
-          
-          {project.createdAt && (
-            <div className="hidden shrink-0 sm:flex sm:flex-col sm:items-end">
-            <p className="mt-1 text-xs leading-5 text-gray-500">
-              Created On <time dateTime={project.lastSeenDateTime}>{project.lastSeen}</time>
-            </p>
-            <div className="mt-1 flex items-center gap-x-1.5">
-              <div className="flex-none rounded-full bg-emerald-500/20 p-1">
-                <div className="h-1.5 w-1.5 rounded-full bg-emerald-500" />
-              </div>
-              <p className="text-xs leading-5 text-gray-500">{convertToLocalTime(project.createdAt)}</p>
-            </div>
-            </div>
-          )}
-        </li>
-        {openProjectId === index && (
-          <div className="translate transform overflow-hidden" details-of={index}>
-            <h3>Project Details</h3>
-            <ProjectDetails projectData={project} />
-          </div>
-        )}
-        </>
-      ))}
-    </ul>
+    <div className="container mx-auto p-4">
+      <h2 className="text-2xl font-bold text-gray-700 mb-4">All Projects</h2>
+      <div className="bg-white shadow overflow-hidden sm:rounded-md">
+        <ul role="list" className="divide-y divide-gray-200">
+          {projects.map((project, index) => (
+            <React.Fragment key={project._id}>
+              <li className={`flex justify-between items-center px-4 py-4 sm:px-6 hover:bg-gray-50 ${openProjectId === project._id ? "bg-gray-50" : ""}`} onClick={(e) => toggleProject(project._id, e)}>
+                <div className="flex min-w-0 gap-x-4">
+                  <div className="min-w-0 flex-1">
+                    <p className="text-sm font-semibold text-gray-900 truncate">{project.clientName}</p>
+                    <p className="text-xs text-gray-500 truncate">{project.projectName}</p>
+                  </div>
+                </div>
+
+                {project.createdAt && (
+                  <div className="flex-shrink-0 hidden sm:flex sm:flex-col sm:items-end">
+                    <p className="text-xs text-gray-500">
+                      Created On <time dateTime={project.createdAt}>{convertToLocalTime(project.createdAt)}</time>
+                    </p>
+                  </div>
+                )}
+                <div className="ml-5 flex-shrink-0">
+                  <svg className={`w-5 h-5 ${openProjectId === project._id ? "text-gray-400 rotate-180" : "text-gray-600"}`} xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
+                    <path fillRule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clipRule="evenodd" />
+                  </svg>
+                </div>
+              </li>
+              {openProjectId === project._id && (
+                <div className="px-4 pt-4 pb-2 sm:px-6 bg-gray-50">
+                  <h3 className="text-lg leading-6 font-medium text-gray-900">Project Details</h3>
+                  <ProjectDetails projectData={project} />
+                </div>
+              )}
+            </React.Fragment>
+          ))}
+        </ul>
+      </div>
     </div>
   )
 }

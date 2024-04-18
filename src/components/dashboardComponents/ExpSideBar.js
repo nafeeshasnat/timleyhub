@@ -9,7 +9,7 @@ const ExpSideBar = ({ sidebarOpen, setSidebarOpen }) => {
   const user = useSelector((state) => state.user.userDetails);
   if(user != null){
     console.log(user);
-    userPath = user.firstName.toLowerCase();
+    userPath = user.companyURLName;
   }
 
   const location = useLocation()

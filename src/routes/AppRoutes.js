@@ -2,23 +2,17 @@ import { BrowserRouter as Router, Routes, Route, Navigate } from "react-router-d
 import HomePage from "../pages/HomePage";
 import LoginPage from "../pages/LoginPage";
 import Dashboard from "../pages/Dashboard";
-// import { useState } from "react";
 import { useSelector } from 'react-redux';
 import AcceptInvite from "../pages/AcceptInvite";
-// Import other pages as needed
 
 const AppRoutes = () => {
-  let userPath = '';
-  // const [isLoggedIn, setIsLoggedIn] = useState(false);
   const isLoggedIn = useSelector((state) => state.user.isSuccess);
   const user = useSelector((state) => state.user.userDetails);
-  if(user != null){
-    console.log(user);
-    userPath = user.firstName.toLowerCase();
-  }
+  const userPath = user && user.companyURLName ? user.companyURLName : 'default';
 
-  console.log(`Logged in ${isLoggedIn}`)
-  
+  console.log(`Logged in: ${isLoggedIn}`);
+  console.log(`User Path: ${userPath}`);
+
   return (
     <Router>
       <Routes>
@@ -26,14 +20,14 @@ const AppRoutes = () => {
         <Route path="/login" element={<LoginPage />} />
         <Route 
           path={`/${userPath}/*`}
-          element={isLoggedIn ? <Dashboard /> : <Navigate to="/login" />} 
+          element={isLoggedIn ? <Dashboard /> : <Navigate to="/login" replace />} 
         />
-        <Route path="/accept-invitation/:invitationToken" element={<AcceptInvite/>}/>
+        <Route path="/accept-invitation/:invitationToken" element={<AcceptInvite />} />
+        {/* Fallback for any unmatched routes */}
+        {/* <Route path="*" element={<Navigate to="/" replace />} /> */}
       </Routes>
     </Router>
   );
 };
 
 export default AppRoutes;
-
-{/* <Route path="/login" element={<LoginPage onLogin={() => setIsLoggedIn(true)} />} /> */}

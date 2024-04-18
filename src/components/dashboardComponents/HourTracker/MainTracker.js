@@ -98,10 +98,11 @@ const MainTracker = () => {
   };  
 
   return (
-    <div>
-      <h1>Time Tracker</h1>
+    <div className="p-5 space-y-4">
+      <h1 className="text-2xl font-bold text-gray-700">Time Tracker</h1>
       <LocalizationProvider dateAdapter={AdapterDateFns}>
         <StaticDatePicker
+          className='rounded-lg shadow-lg'
           label="Date picker"
           inputFormat="MM/dd/yyyy"
           value={selectedDate}
@@ -112,16 +113,16 @@ const MainTracker = () => {
       </LocalizationProvider>
 
       <div>
-        <h3>Select a Project</h3>
+        <h3 className="font-semibold text-lg">Select a Project</h3>
         <div ref={projectDropdownRef} className="relative">
           <div
             onClick={() => setShowProjectOptions(!showProjectOptions)}
-            className="w-full border border-gray-300 rounded-md py-2 px-4 bg-white cursor-pointer"
+            className="w-full border border-gray-300 rounded-lg py-2 px-4 bg-white shadow-sm cursor-pointer"
           >
             {selectedProject ? `${selectedProject.clientName} : ${selectedProject.projectName}` : "Select a project"}
           </div>
           {showProjectOptions && (
-            <ul className="absolute z-10 w-full bg-white border border-gray-300 mt-1 rounded-md max-h-60 overflow-auto">
+            <ul className="absolute z-20 w-full bg-white border border-gray-300 mt-1 rounded-lg shadow-lg overflow-auto">
               {projects.map((project) => (
                 <li
                   key={project._id}
@@ -139,16 +140,16 @@ const MainTracker = () => {
           )}
         </div>
 
-        <h3>Select a Task</h3>
-        <div ref={taskDropdownRef} className="relative mt-4">
+        <h3 className="font-semibold text-lg mt-4">Select a Task</h3>
+        <div ref={taskDropdownRef} className="relative">
           <div
             onClick={() => setShowTaskOptions(!showTaskOptions)}
-            className="w-full border border-gray-300 rounded-md py-2 px-4 bg-white cursor-pointer"
+            className="w-full border border-gray-300 rounded-lg py-2 px-4 bg-white shadow-sm cursor-pointer"
           >
             {selectedTask ? selectedTask.name : "Select a task"}
           </div>
           {showTaskOptions && (
-            <ul className="absolute z-10 w-full bg-white border border-gray-300 mt-1 rounded-md max-h-60 overflow-auto">
+            <ul className="absolute z-20 w-full bg-white border border-gray-300 mt-1 rounded-lg shadow-lg overflow-auto">
               {selectedProject && selectedProject.tasks.map((task) => (
                 <li
                   key={task.id}
@@ -165,40 +166,39 @@ const MainTracker = () => {
           )}
         </div>
 
-        <div className="flex space-x-2 items-center mt-4">
+        <div className="flex flex-col sm:flex-row space-y-2 sm:space-y-0 sm:space-x-2 mt-4">
           <input
             type="text"
             value={hours}
             onChange={(e) => handleInput(e, 'hours')}
             placeholder="Hours"
-            className="border border-gray-300 rounded-md py-2 px-4 w-24"
+            className="flex-1 border border-gray-300 rounded-lg py-2 px-4"
           />
-          <span>:</span>
           <input
             type="text"
             value={minutes}
             onChange={(e) => handleInput(e, 'minutes')}
             placeholder="Minutes"
-            className="border border-gray-300 rounded-md py-2 px-4 w-24"
+            className="flex-1 border border-gray-300 rounded-lg py-2 px-4"
           />
           <input
             type="text"
             value={text}
             onChange={(e) => setText(e.target.value)}
             placeholder="Enter text"
-            className="border border-gray-300 rounded-md py-2 px-4 w-full"
+            className="flex-1 border border-gray-300 rounded-lg py-2 px-4"
           />
         </div>
 
-        <button onClick={saveTimeEntry} className="px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-700">
+        <button onClick={saveTimeEntry} className="mt-4 w-full sm:w-auto bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-lg transition-colors">
           Save
         </button>
       </div>
 
-      <div className="time-entries">
-      {timeEntries.map((entry) => (
-          <TimeEntry key={`${entry._id}-${forceUpdateKey}`} {...entry} />
-      ))}
+      <div className="space-y-2">
+        {timeEntries.map((entry) => (
+          <TimeEntry key={entry._id} {...entry} />
+        ))}
       </div>
     </div>
   );

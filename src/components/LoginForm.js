@@ -1,37 +1,46 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import axios from 'axios';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import { useDispatch } from 'react-redux';
 import { loginSuccess } from '../features/userSlice';
-
 
 const LoginForm = ({ onToggleForm }) => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
+  const location = useLocation(); 
   const [formData, setFormData] = useState({});
+  const [errorMessage, setErrorMessage] = useState('');  // State to handle error messages
 
-  const onChange = e => setFormData({ ...formData, [e.target.name]: e.target.value });
+  useEffect(() => {
+    const searchParams = new URLSearchParams(location.search);
+    const email = searchParams.get('email');
+    if (email) {
+      setFormData(prevState => ({ ...prevState, email }));
+    }
+  }, [location.search]);
+
+  const onChange = e => {
+    setFormData({ ...formData, [e.target.name]: e.target.value });
+    if (errorMessage) setErrorMessage('');  // Clear error message when user starts typing
+  };
 
   const onSubmit = async e => {
     e.preventDefault();
     try {
       const res = await axios.post('http://localhost:5001/api/users/login', formData);
       if (res.data) {
-        const userDetils = res.data.user || res.data.employee;
-        console.log(userDetils);
-        dispatch(loginSuccess(userDetils));
-        const companyName = userDetils.firstName.toLowerCase();
+        const userDetails = res.data.user || res.data.employee;
+        console.log(userDetails);
+        dispatch(loginSuccess(userDetails));
+        console.log(userDetails)
+        const companyName = userDetails.companyURLName;
         
         navigate(`/${companyName}`);
       }
-      // Handle login success
     } catch (err) {
-      console.error(err);
-      // Optionally, check if response property exists
       if (err.response) {
         console.error(err.response.data);
-      } else {
-        console.error('Error occurred:', err.message);
+        setErrorMessage('Invalid email or password');  // Set error message if login fails
       }
     }
   };
@@ -40,6 +49,11 @@ const LoginForm = ({ onToggleForm }) => {
     <div className="mt-10 sm:mx-auto sm:w-full sm:max-w-sm">
       <form className="space-y-6" onSubmit={onSubmit}>
         <div>
+          {errorMessage && (
+            <div className='relative rounded-full px-3 py-1 text-sm leading-6 text-gray-600 ring-1 ring-gray-900/10 hover:ring-gray-900/20 mb-4'>
+              <p className="mb-4 text-sm text-red-600 mb-0 text-center">{errorMessage}</p>
+            </div>
+          )}
           <label htmlFor="email" className="block text-sm font-medium leading-6 text-gray-900">
             Email address
           </label>
@@ -49,6 +63,7 @@ const LoginForm = ({ onToggleForm }) => {
               name="email"
               type="email"
               autoComplete="email"
+              value={formData.email || ''}
               required
               onChange={onChange}
               className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
