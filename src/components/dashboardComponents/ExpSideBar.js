@@ -265,7 +265,7 @@ const ExpSideBar = ({ sidebarOpen, setSidebarOpen }) => {
 
               {/* <!-- Menu Item Settings --> */}
               <li>
-                <NavLink
+                {/* <NavLink
                   to={`/${userPath}/settings`}
                   className={`group relative flex items-center gap-2.5 rounded-sm py-2 px-4 font-medium text-slate-50 duration-300 ease-in-out hover:bg-graydark dark:hover:bg-meta-4 ${pathname.includes(
                     "settings"
@@ -301,7 +301,7 @@ const ExpSideBar = ({ sidebarOpen, setSidebarOpen }) => {
                     </defs>
                   </svg>
                   Settings
-                </NavLink>
+                </NavLink> */}
               </li>
               {/* <!-- Menu Item Settings --> */}
             </ul>

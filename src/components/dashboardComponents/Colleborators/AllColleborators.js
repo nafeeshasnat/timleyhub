@@ -58,7 +58,7 @@ const AllColleborators = () => {
                       <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">{colleborator.firstName} {colleborator.lastName}</td>
                       <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{colleborator.email}</td>
                       <td className="px-6 py-4 whitespace-nowrap">
-                        <span className="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800 capitalize">{colleborator.role === 'comAdmin' ? 'Admin' : colleborator.invitationToken ? 'Invited' : colleborator.role}</span>
+                        <span className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full text-green-800 capitalize ${colleborator.role === 'comAdmin' ? 'bg-green-100' : colleborator.invitationToken ? 'bg-red-100' : 'bg-blues-100'}`}>{colleborator.role === 'comAdmin' ? 'Admin' : colleborator.invitationToken ? 'Invited' : colleborator.role}</span>
                       </td>
                     </tr>
                   ))}

@@ -35,7 +35,7 @@ const Pricing = () => {
                 <li>Advanced time tracking features</li>
                 <li>Premium support</li>
               </ul>
-              <a className="text-center block w-full bg-blue-600 text-white py-3 rounded hover:bg-blue-700 transition ease-in-out duration-150">$50 Per Month</a>
+              <a className="text-center block w-full bg-blue-600 text-white py-3 rounded hover:bg-blue-700 transition ease-in-out duration-150 cursor-not-allowed">Coming Soon</a>
             </div>
           </div>
 
@@ -54,7 +54,7 @@ const Pricing = () => {
                 <li>Integration with enterprise systems</li>
                 <li>Custom reporting system</li>
               </ul>
-              <a className="text-center block w-full bg-gray-900 text-white py-3 rounded hover:bg-black transition ease-in-out duration-150">Contact Us</a>
+              <a className="text-center block w-full bg-gray-900 text-white py-3 rounded hover:bg-black transition ease-in-out duration-150 cursor-not-allowed">Coming Soon</a>
             </div>
           </div>
 

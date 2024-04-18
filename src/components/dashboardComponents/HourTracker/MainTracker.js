@@ -3,21 +3,19 @@ import { LocalizationProvider, StaticDatePicker } from '@mui/x-date-pickers';
 import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFns';
 import TextField from '@mui/material/TextField';
 import { useSelector } from 'react-redux';
+import axios from 'axios';
 import TimeEntry from './TimeEntry';
 
-const MainTracker = () => {
+function MainTracker() {
   const [selectedDate, setSelectedDate] = useState(new Date());
-  const user = useSelector((state) => state.user.userDetails);
+  const user = useSelector(state => state.user.userDetails);
   const userID = user._id;
-
+  const [projects, setProjects] = useState([]);
+  const [timeEntries, setTimeEntries] = useState([]);
   const [selectedProject, setSelectedProject] = useState(null);
   const [selectedTask, setSelectedTask] = useState(null);
   const [showProjectOptions, setShowProjectOptions] = useState(false);
   const [showTaskOptions, setShowTaskOptions] = useState(false);
-  const [projects, setProjects] = useState([]);
-  const [timeEntries, setTimeEntries] = useState([]);
-  const [timeSave, setTimeSave] = useState(false);
-
   const [hours, setHours] = useState('');
   const [minutes, setMinutes] = useState('');
   const [text, setText] = useState('');
@@ -27,36 +25,31 @@ const MainTracker = () => {
   const taskDropdownRef = useRef(null);
 
   useEffect(() => {
-      fetch(`http://localhost:5001/api/users/projects/${userID}`)
-          .then(response => response.json())
-          .then(setProjects)
-          .catch(error => console.error('Error fetching projects:', error));
+    axios.get(`http://localhost:5001/api/users/projects/${userID}`)
+      .then(response => setProjects(response.data))
+      .catch(error => console.error('Error fetching projects:', error));
   }, [userID]);
 
   useEffect(() => {
-      fetchTimeEntries();
-      setTimeSave(false);
-  }, [selectedDate, userID, timeSave]);
-  
-  const fetchTimeEntries = () => {
     const formattedDate = selectedDate.toISOString().split('T')[0];
-    fetch(`http://localhost:5001/api/time-entries/timecards/${userID}/${formattedDate}`)
-      .then(response => response.json())
-      .then(setTimeEntries)
+    axios.get(`http://localhost:5001/api/time-entries/timecards/${userID}/${formattedDate}`)
+      .then(response => setTimeEntries(response.data))
       .catch(error => console.error('Error fetching time entries:', error));
+  }, [selectedDate, userID, forceUpdateKey]);
+
+  const handleDateChange = (newDate) => {
+    setSelectedDate(newDate);
   };
 
-  const handleDateChange = (newDate) => setSelectedDate(newDate);
+  const handleInput = (event, type) => {
+    const value = event.target.value;
+    if (!/^\d*$/.test(value)) return;
 
-  const handleInput = (e, type) => {
-      const value = e.target.value;
-      if (!/^\d*$/.test(value)) return;
-
-      if (type === 'hours') {
-          setHours(value <= 24 ? value : 24);
-      } else if (type === 'minutes') {
-          setMinutes(value <= 59 ? value : 59);
-      }
+    if (type === 'hours') {
+      setHours(value <= 24 ? value : 24);
+    } else if (type === 'minutes') {
+      setMinutes(value <= 59 ? value : 59);
+    }
   };
 
   const saveTimeEntry = () => {
@@ -69,40 +62,23 @@ const MainTracker = () => {
       enteredMinutes: minutes,
       comment: text,
     };
-  
-    fetch('http://localhost:5001/api/time-entries/time', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(timeEntryData)
-    })
-    .then(response => response.json())
-    .then(data => {
-      console.log('Time entry saved:', data);
-      // Optionally, clear the input fields here if needed
-      setHours('');
-      setMinutes('');
-      setText('');
-      fetchTimeEntries();
-      // Fetch updated time entries
-      return fetch(`http://localhost:5001/api/time-entries/timecards/${userID}/${selectedDate.toISOString().split('T')[0]}`)
-    })
-    .then(response => response.json())
-    .then(newTimeEntries => {
-      setTimeEntries(newTimeEntries); // Update state with new time entries
-      setTimeSave(true);
-      setForceUpdateKey(prevKey => prevKey + 1);
-    })
-    .catch(error => {
-      console.error('Error saving time entry:', error);
-    });
-  };  
+
+    axios.post('http://localhost:5001/api/time-entries/time', timeEntryData)
+      .then(() => {
+        setHours('');
+        setMinutes('');
+        setText('');
+        setForceUpdateKey(prevKey => prevKey + 1);
+      })
+      .catch(error => console.error('Error saving time entry:', error));
+  };
 
   return (
-    <div className="p-5 space-y-4">
+    <div key={forceUpdateKey} className="p-5 space-y-4">
       <h1 className="text-2xl font-bold text-gray-700">Time Tracker</h1>
       <LocalizationProvider dateAdapter={AdapterDateFns}>
         <StaticDatePicker
-          className='rounded-lg shadow-lg'
+          className="rounded-lg shadow-lg"
           label="Date picker"
           inputFormat="MM/dd/yyyy"
           value={selectedDate}
@@ -197,11 +173,11 @@ const MainTracker = () => {
 
       <div className="space-y-2">
         {timeEntries.map((entry) => (
-          <TimeEntry key={entry._id} {...entry} />
+          <TimeEntry key={entry._id} {...entry} forceUpdate={forceUpdateKey} />
         ))}
       </div>
     </div>
   );
-};
+}
 
 export default MainTracker;

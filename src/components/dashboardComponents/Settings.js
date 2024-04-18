@@ -6,7 +6,8 @@ const Settings = () => {
   return(
     <div>
       <Tabs>
-        <Tab component={<Integration />} active>Profile</Tab>
+        <Tab active>Profile</Tab>
+        {/* <Tab component={<Integration />} active>Profile</Tab> */}
         <Tab component="content of tab 2"> Permissions</Tab>
         <Tab component="content of tab 3">3rd Party Integration</Tab>
         <p>fgsdgs</p>

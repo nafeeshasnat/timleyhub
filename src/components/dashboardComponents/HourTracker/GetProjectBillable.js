@@ -1,62 +1,59 @@
-import React, { useState, useEffect, useMemo } from 'react';
+import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 
-const GetProjectBillable = ({ projectId, onPercentageChange }) => {
-    const [timeDetails, setTimeDetails] = useState({
-        status: '',
-        totalBillableHours: 0,
-        totalBillableMinutes: 0,
-        totalBudget: 0
-    });
+function GetProjectBillable({ projectId, onPercentageChange }) {
+  const [timeDetails, setTimeDetails] = useState({
+    status: '',
+    totalBillableHours: 0,
+    totalBillableMinutes: 0,
+    totalBudget: 0
+  });
 
-    useEffect(() => {
-        const fetchBillableTime = async () => {
-            try {
-                const response = await axios.get(`http://localhost:5001/api/projects/getBillableTime/${projectId}`);
-                setTimeDetails(response.data);
-            } catch (error) {
-                console.error('Error fetching billable time:', error);
-            }
-        };
+  // Fetch billable time details when projectId changes
+  useEffect(() => {
+    async function fetchBillableTime() {
+      try {
+        const response = await axios.get(`http://localhost:5001/api/projects/getBillableTime/${projectId}`);
+        if (response.data) {
+          setTimeDetails(response.data);
+          updatePercentage(response.data);
+        }
+      } catch (error) {
+        console.error('Error fetching billable time:', error);
+      }
+    }
 
-        fetchBillableTime();
-    }, [projectId]);
+    fetchBillableTime();
+  }, [projectId]);
 
-    const getTotalTimeInMinutes = () => {
-        return (timeDetails.totalBillableHours * 60) + timeDetails.totalBillableMinutes;
-    };
+  // Calculate and update the percentage used of the budget
+  function updatePercentage(data) {
+    const totalMinutes = (data.totalBillableHours * 60) + data.totalBillableMinutes;
+    const budgetMinutes = data.totalBudget * 60;
+    const percentage = (totalMinutes / budgetMinutes) * 100;
+    onPercentageChange(percentage);
+  }
 
-    const getPercentage = () => {
-        const budgetMinutes = timeDetails.totalBudget * 60;
-        const billableMinutes = getTotalTimeInMinutes();
-        return (billableMinutes / budgetMinutes) * 100;
-    };
+  // Render the component UI
+  return (
+    <div>
+      <h3>{timeDetails.status === 'Over budget' ? 'Over Budget Time' : 'Remaining Time'}</h3>
+      <p>Hours: {formatHoursAndMinutes(timeDetails.totalBillableHours, timeDetails.totalBillableMinutes)}</p>
+      <p>Percentage Used: {calculatePercentage().toFixed(2)}%</p>
+    </div>
+  );
 
-    useEffect(() => {
-        const percentage = getPercentage();
-        onPercentageChange(percentage);
-    }, [timeDetails, onPercentageChange]);
+  // Helper function to format hours and minutes
+  function formatHoursAndMinutes(hours, minutes) {
+    return `${hours}h ${minutes}m`;
+  }
 
-    const remainingOrOverTime = useMemo(() => {
-        const budgetMinutes = timeDetails.totalBudget * 60;
-        const billableMinutes = getTotalTimeInMinutes();
-        const difference = Math.abs(budgetMinutes - billableMinutes);
-
-        const hours = Math.floor(difference / 60);
-        const minutes = difference % 60;
-
-        return { hours, minutes };
-    }, [timeDetails]);
-
-    const percentage = getPercentage();
-
-    return (
-        <div>
-            <h3>{timeDetails.status === 'Over budget' ? 'Over Budget Time' : 'Remaining Time'}</h3>
-            <p>Hours: {remainingOrOverTime.hours}, Minutes: {remainingOrOverTime.minutes}</p>
-            <p>Percentage Used: {percentage.toFixed(2)}%</p>
-        </div>
-    );
-};
+  // Helper function to calculate the display percentage
+  function calculatePercentage() {
+    const totalMinutes = (timeDetails.totalBillableHours * 60) + timeDetails.totalBillableMinutes;
+    const budgetMinutes = timeDetails.totalBudget * 60;
+    return (totalMinutes / budgetMinutes) * 100;
+  }
+}
 
 export default GetProjectBillable;

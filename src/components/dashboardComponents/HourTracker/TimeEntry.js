@@ -1,19 +1,15 @@
-// TimeEntry.js
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import GetProjectBillable from './GetProjectBillable';
 
-const TimeEntry = ({task, projectName, comment, date, enteredHours, enteredMinutes, projectId}) => {
-const [percentage, setPercentage] = useState(100); // Initial value set to 100
-const formattedDate  = new Date(date);
-const timeSpent = `${enteredHours.toString().padStart(2, '0')} : ${enteredMinutes.toString().padStart(2, '0')}`;
+function TimeEntry({ task, projectName, comment, date, enteredHours, enteredMinutes, projectId, forceUpdate }) {
+  const [percentage, setPercentage] = useState(100);
+  const formattedDate = new Date(date);
+  const timeSpent = `${enteredHours.toString().padStart(2, '0')} : ${enteredMinutes.toString().padStart(2, '0')}`;
 
-const year = formattedDate.getFullYear();
-const month = formattedDate.getMonth() + 1; // getMonth() returns 0-11
-const day = formattedDate.getDate();
-
-const handlePercentageChange = (newPercentage) => {
-  setPercentage(newPercentage);
-};
+  // This effect updates the percentage based on external changes, such as modifications in project billing info.
+  useEffect(() => {
+    // No further action taken here unless you need to respond to forceUpdate changes.
+  }, [forceUpdate]);
 
   return (
     <div className="bg-white shadow rounded-md p-4 mb-4">
@@ -22,12 +18,14 @@ const handlePercentageChange = (newPercentage) => {
           <h4 className="text-lg font-semibold">Project: {projectName}</h4>
           <p className="text-sm text-gray-600">Task: {task.name}</p>
           <p className="text-sm text-gray-600">Comment: {comment}</p>
-          <p className="text-xs text-gray-500">{year}-{month.toString().padStart(2, '0')}-{day.toString().padStart(2, '0')}</p>
+          <p className="text-xs text-gray-500">
+            {formattedDate.getFullYear()}-{(formattedDate.getMonth() + 1).toString().padStart(2, '0')}-{formattedDate.getDate().toString().padStart(2, '0')}
+          </p>
         </div>
         <div className="text-right">
           <span className="text-2xl font-bold">{timeSpent}</span>
           <p className="text-sm text-gray-600">hours</p>
-          <GetProjectBillable projectId={projectId} onPercentageChange={handlePercentageChange}/>
+          <GetProjectBillable projectId={projectId} onPercentageChange={setPercentage} />
         </div>
       </div>
       <div className="w-full bg-gray-200 rounded-full h-2.5 dark:bg-gray-700 mt-4">
