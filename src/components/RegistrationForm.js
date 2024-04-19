@@ -19,7 +19,8 @@ const RegistrationForm = ({ onToggleForm }) => {
   const onSubmit = async (e) => {
     e.preventDefault();
     try {
-      const res = await axios.post('http://localhost:5001/api/users/signup', formData);
+      const apiUrl = process.env.REACT_APP_API_URL;
+      const res = await axios.post(`${apiUrl}/api/users/signup`, formData);
       console.log(res.data);
       // Handle success
       setShowSuccessPopup(true);

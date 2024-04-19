@@ -10,9 +10,10 @@ const AcceptInvite = () => {
     const [error, setError] = useState('');
     const { invitationToken } = useParams();
     const navigate = useNavigate();
+    const apiUrl = process.env.REACT_APP_API_URL;
 
     useEffect(() => {
-        fetch(`http://localhost:5001/api/collaborators/invite/${invitationToken}`)
+        fetch(`${apiUrl}/api/collaborators/invite/${invitationToken}`)
             .then(response => response.json())
             .then(data => setEmployee(data))
             .catch(err => console.error('Error fetching data:', err));
@@ -41,7 +42,7 @@ const AcceptInvite = () => {
       // Submit password setup logic here
 
       try {
-        const response = await fetch('http://localhost:5001/api/collaborators/set-password', {
+        const response = await fetch(`${apiUrl}/api/collaborators/set-password`, {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json'

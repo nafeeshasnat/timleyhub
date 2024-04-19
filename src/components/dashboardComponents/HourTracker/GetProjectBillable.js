@@ -13,7 +13,8 @@ function GetProjectBillable({ projectId, onPercentageChange }) {
   useEffect(() => {
     async function fetchBillableTime() {
       try {
-        const response = await axios.get(`http://localhost:5001/api/projects/getBillableTime/${projectId}`);
+        const apiUrl = process.env.REACT_APP_API_URL;
+        const response = await axios.get(`${apiUrl}/api/projects/getBillableTime/${projectId}`);
         if (response.data) {
           setTimeDetails(response.data);
           updatePercentage(response.data);

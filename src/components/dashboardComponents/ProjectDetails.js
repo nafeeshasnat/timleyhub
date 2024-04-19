@@ -27,7 +27,8 @@ const ProjectDetails = (project) => {
 
   const deleteProject = async (projectId) => {
     try {
-      const response = await fetch(`http://localhost:5001/api/projects/remove/${projectId}`, {
+      const apiUrl = process.env.REACT_APP_API_URL;
+      const response = await fetch(`${apiUrl}/api/projects/remove/${projectId}`, {
         method: 'DELETE',
       });
       dispatch(projectDelete(projectId));

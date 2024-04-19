@@ -4,7 +4,6 @@ export const fetchCollaborators = () => async (dispatch, getState) => {
     const user = state.user.userDetails;
     const userID = user.role === 'comAdmin' ? user._id : user.company;
     const apiUrl = process.env.REACT_APP_API_URL;
-    console.log(apiUrl);
     const response = await fetch(`${apiUrl}/api/collaborators/${userID}`); // Adjust the API endpoint as needed
     if (!response.ok) {
       throw new Error('Failed to fetch collaborators');

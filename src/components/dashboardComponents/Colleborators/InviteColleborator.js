@@ -33,7 +33,8 @@ const InviteColleborator = () => {
     console.log(collabooratorData);
 
     // Send the POST request to the backend
-    fetch('http://localhost:5001/api/collaborator/invite/', { // Replace with your actual backend server URL
+    const apiUrl = process.env.REACT_APP_API_URL;
+    fetch(`${apiUrl}/api/collaborator/invite/`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',

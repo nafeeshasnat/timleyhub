@@ -16,7 +16,8 @@ const AllProjects = () => {
     // Replace 'adminId' with the actual logged-in admin's ID
     const adminId = userID; // This should be dynamically set based on logged-in user
 
-    fetch(`http://localhost:5001/api/projects?adminId=${adminId}`)
+    const apiUrl = process.env.REACT_APP_API_URL;
+    fetch(`${apiUrl}/api/projects?adminId=${adminId}`)
       .then(response => response.json())
       .then(data => {
         // setProjects(data);

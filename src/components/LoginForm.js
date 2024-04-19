@@ -27,7 +27,8 @@ const LoginForm = ({ onToggleForm }) => {
   const onSubmit = async e => {
     e.preventDefault();
     try {
-      const res = await axios.post('http://localhost:5001/api/users/login', formData);
+      const apiUrl = process.env.REACT_APP_API_URL;
+      const res = await axios.post(`${apiUrl}/api/users/login`, formData);
       if (res.data) {
         const userDetails = res.data.user || res.data.employee;
         console.log(userDetails);

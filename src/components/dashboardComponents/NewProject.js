@@ -70,9 +70,11 @@ const NewProject = (props) => {
       admin: userID,
     };
 
+    const apiUrl = process.env.REACT_APP_API_URL;
+
     const url = isUpdate
-    ? `http://localhost:5001/api/projects/update/${initialProjectDataToUpdate._id}`
-    : 'http://localhost:5001/api/projects/new';
+    ? `${apiUrl}/api/projects/update/${initialProjectDataToUpdate._id}`
+    : `${apiUrl}/api/projects/new`;
 
     const method = isUpdate ? 'PUT' : 'POST';
   

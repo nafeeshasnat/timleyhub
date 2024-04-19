@@ -24,15 +24,17 @@ function MainTracker() {
   const projectDropdownRef = useRef(null);
   const taskDropdownRef = useRef(null);
 
+  const apiUrl = process.env.REACT_APP_API_URL;
+
   useEffect(() => {
-    axios.get(`http://localhost:5001/api/users/projects/${userID}`)
+    axios.get(`${apiUrl}/api/users/projects/${userID}`)
       .then(response => setProjects(response.data))
       .catch(error => console.error('Error fetching projects:', error));
   }, [userID]);
 
   useEffect(() => {
     const formattedDate = selectedDate.toISOString().split('T')[0];
-    axios.get(`http://localhost:5001/api/time-entries/timecards/${userID}/${formattedDate}`)
+    axios.get(`${apiUrl}/api/time-entries/timecards/${userID}/${formattedDate}`)
       .then(response => setTimeEntries(response.data))
       .catch(error => console.error('Error fetching time entries:', error));
   }, [selectedDate, userID, forceUpdateKey]);
@@ -63,7 +65,7 @@ function MainTracker() {
       comment: text,
     };
 
-    axios.post('http://localhost:5001/api/time-entries/time', timeEntryData)
+    axios.post(`${apiUrl}/api/time-entries/time`, timeEntryData)
       .then(() => {
         setHours('');
         setMinutes('');
