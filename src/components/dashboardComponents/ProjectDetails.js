@@ -3,12 +3,21 @@ import EditModal from "./EditModal";
 import NewProject from "./NewProject";
 import { useSelector, useDispatch } from 'react-redux';
 import { projectUpdate, projectDelete } from "../../features/AllProjectsSlice";
+import { NavLink } from "react-router-dom"
 
 const ProjectDetails = (project) => {
   const dispatch = useDispatch();
   const isUpdated = useSelector((state) => state.allProjects.updated);
   const [editModal, setEditModal] = useState(false);
   const data = project.projectData;
+
+  let userPath = '';
+  const user = useSelector((state) => state.user.userDetails);
+  if(user != null){
+    console.log(user);
+    userPath = user.companyURLName;
+  }
+  
 
   const toggleModal = () => {
     setEditModal(!editModal); // Toggle the modal state
@@ -47,10 +56,14 @@ const ProjectDetails = (project) => {
 
   return (
     <div>
-      <p>Project allocated time: {data.projectTimeBudget} hours</p>
-      <button onClick={() => openModal('edit')}>Edit</button>
-      <button onClick={() => openModal('del')}>Delete</button>
-      <a href="">Details -{'>'}</a>
+      <p className="text-slate-500">Project allocated time: {data.projectTimeBudget} hours</p>
+      <div className="flex mt-8">
+        <button className="w-full text-center py-2 bg-blue-200 text-blue-900 hover:bg-blue-300 transition duration-150" onClick={() => openModal('edit')}>Edit</button>
+        <button className="w-full text-center py-2 bg-red-200 text-red-900 hover:bg-red-300 transition duration-150" onClick={() => openModal('del')}>Delete</button>
+        <NavLink className="w-full text-center py-2 bg-blue-200 text-blue-900 hover:bg-blue-300 transition duration-150" to={`/${userPath}/projects/${data._id}`}>
+          More Details -{'>'}
+        </NavLink>
+      </div>
       {editModal && <EditModal openModal = {editModal} closeModal={closeModal}>
        { why == 'edit' ? <NewProject updateProject={true} projectData={project} /> : 
        <div>

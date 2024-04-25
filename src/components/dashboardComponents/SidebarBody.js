@@ -4,6 +4,7 @@ import AllProjects from "./AllProjects";
 import MainTracker from "./HourTracker/MainTracker";
 import AllColleborators from "./Colleborators/AllColleborators";
 import Settings from "./Settings";
+import SingleProjectDetails from "./SigleProjectDetails";
 
 const SidebarBody = () => {
   return (
@@ -14,6 +15,7 @@ const SidebarBody = () => {
       <Route path="time-tracker" element={<MainTracker />} />
       <Route path="colleborators" element={<AllColleborators/>} />
       <Route path="settings" element={<Settings/>} />
+      <Route path="projects/:projectID" element={<SingleProjectDetails />} />
     </Routes>
   );
 }

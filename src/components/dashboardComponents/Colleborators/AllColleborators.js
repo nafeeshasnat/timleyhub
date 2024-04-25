@@ -5,7 +5,6 @@ import { fetchCollaborators } from "../../../actions/collaboratorsActions";
 import InviteColleborator from "./InviteColleborator";
 
 const AllColleborators = () => {
-
   const [editModal, setEditModal] = useState(false);
   const dispatch = useDispatch();
   const collaborators = useSelector(state => state.collaborators.collaborators);
@@ -13,59 +12,61 @@ const AllColleborators = () => {
   useEffect(() => {
     dispatch(fetchCollaborators());
   }, [dispatch]);
-  
+
   const closeModal = () => {
     setEditModal(false); // Function to close the modal
   };
-  
+
   return (
-    <div className="container mx-auto mt-10">
+    <div className="container mx-auto mt-10 px-4 sm:px-6 lg:px-8">
       <div>
-        <h1>All Collaborators</h1>
+        <h1 className="text-2xl font-semibold text-gray-800">All Collaborators</h1>
         <button
           type="button"
-          className="mt-3 inline-flex w-full justify-center rounded-md bg-blue-500 px-3 py-2 text-sm font-semibold text-white shadow-sm ring-1 ring-inset ring-gray-300 hover:opacity-85 sm:mt-0 sm:w-auto"
+          className="mt-3 inline-flex items-center justify-center rounded-md bg-blue-600 px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
           onClick={() => setEditModal(true)}>
-          Invite collaborators
+          Invite Collaborators
         </button>
-        {editModal && <EditModal openModal = {editModal} closeModal={closeModal}>
-          <h2 className="text-xl mb-4 font-bold text-center">Add a colleborator</h2>
-          <p className="text-left text-sm font-medium text-gray-500 text-center">Invite will be sent over email</p>
-          <InviteColleborator/>
-        </EditModal>}
-      </div>
-      <div className="flex flex-col">
-        <div className="-my-2 overflow-x-auto sm:-mx-6 lg:-mx-8">
-          <div className="py-2 align-middle inline-block min-w-full sm:px-6 lg:px-8">
-            <div className="shadow overflow-hidden border-b border-gray-200 sm:rounded-lg">
-              <table className="min-w-full divide-y divide-gray-200">
-                <thead className="bg-gray-50">
-                  <tr>
-                    <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                      Name
-                    </th>
-                    <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                      Email Address
-                    </th>
-                    <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                      Role
-                    </th>
-                  </tr>
-                </thead>
-                <tbody className="bg-white divide-y divide-gray-200">
-                  {collaborators.map((colleborator, index) => (
-                    <tr key={index}>
-                      <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">{colleborator.firstName} {colleborator.lastName}</td>
-                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{colleborator.email}</td>
-                      <td className="px-6 py-4 whitespace-nowrap">
-                        <span className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full text-green-800 capitalize ${colleborator.role === 'comAdmin' ? 'bg-green-100' : colleborator.invitationToken ? 'bg-red-100' : 'bg-blues-100'}`}>{colleborator.role === 'comAdmin' ? 'Admin' : colleborator.invitationToken ? 'Invited' : colleborator.role}</span>
-                      </td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
+        {editModal && (
+          <EditModal openModal={editModal} closeModal={closeModal}>
+            <div className="p-5">
+              <h2 className="text-xl font-bold text-gray-900 mb-4">Add a Collaborator</h2>
+              <p className="text-sm text-gray-500">Invitations will be sent over email.</p>
+              <InviteColleborator />
             </div>
-          </div>
+          </EditModal>
+        )}
+      </div>
+      <div className="mt-6">
+        <div className="align-middle inline-block min-w-full border-b border-gray-200 shadow sm:rounded-lg">
+          <table className="min-w-full divide-y divide-gray-200">
+            <thead className="bg-gray-50">
+              <tr>
+                <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  Name
+                </th>
+                <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  Email Address
+                </th>
+                <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  Role
+                </th>
+              </tr>
+            </thead>
+            <tbody className="bg-white divide-y divide-gray-300">
+              {collaborators.map((collaborator, index) => (
+                <tr key={index}>
+                  <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">{collaborator.firstName} {collaborator.lastName}</td>
+                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{collaborator.email}</td>
+                  <td className="px-6 py-4 whitespace-nowrap">
+                    <span className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${collaborator.role === 'comAdmin' ? 'bg-green-100 text-green-800' : collaborator.invitationToken ? 'bg-red-100 text-red-800' : 'bg-blue-100 text-blue-800'}`}>
+                      {collaborator.role === 'comAdmin' ? 'Admin' : collaborator.invitationToken ? 'Invited' : collaborator.role}
+                    </span>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
         </div>
       </div>
     </div>

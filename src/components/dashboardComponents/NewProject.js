@@ -5,7 +5,6 @@ import { projectUpdate } from '../../features/AllProjectsSlice';
 import { useNavigate } from 'react-router-dom';
 
 const NewProject = (props) => {
-  console.log(props.updateProject);
   const isUpdate = props.updateProject || false;
   let initialProjectDataToUpdate;
 
@@ -14,7 +13,7 @@ const NewProject = (props) => {
   }
   const user = useSelector((state) => state.user.userDetails);
   const userID = user._id;
-  const userName = user.firstName;
+  const userName = user.companyURLName;
   const dispatch = useDispatch();
   const formValues = useSelector((state) => state.projectForm);
 

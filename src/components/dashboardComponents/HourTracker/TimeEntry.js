@@ -1,15 +1,19 @@
 import React, { useState, useEffect } from 'react';
 import GetProjectBillable from './GetProjectBillable';
 
-function TimeEntry({ task, projectName, comment, date, enteredHours, enteredMinutes, projectId, forceUpdate }) {
+function TimeEntry({ taskId, projectName, comment, date, enteredHours, enteredMinutes, projectId, forceUpdate }) {
+  const task = taskId;
   const [percentage, setPercentage] = useState(100);
   const formattedDate = new Date(date);
   const timeSpent = `${enteredHours.toString().padStart(2, '0')} : ${enteredMinutes.toString().padStart(2, '0')}`;
 
-  // This effect updates the percentage based on external changes, such as modifications in project billing info.
-  useEffect(() => {
-    // No further action taken here unless you need to respond to forceUpdate changes.
-  }, [forceUpdate]);
+  // This effect updates the percentage based on external changes.
+  useEffect(() => {}, [forceUpdate]);
+
+  if (!taskId) {
+    console.error('Task data is missing', task);
+    return <div>Task data is missing</div>;
+  }
 
   return (
     <div className="bg-white shadow rounded-md p-4 mb-4">
@@ -38,5 +42,6 @@ function TimeEntry({ task, projectName, comment, date, enteredHours, enteredMinu
     </div>
   );
 }
+
 
 export default TimeEntry;

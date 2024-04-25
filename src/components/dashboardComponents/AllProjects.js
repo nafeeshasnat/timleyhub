@@ -47,7 +47,7 @@ const AllProjects = () => {
         <ul role="list" className="divide-y divide-gray-200">
           {projects.map((project, index) => (
             <React.Fragment key={project._id}>
-              <li className={`flex justify-between items-center px-4 py-4 sm:px-6 hover:bg-gray-50 ${openProjectId === project._id ? "bg-gray-50" : ""}`} onClick={(e) => toggleProject(project._id, e)}>
+              <li className={`flex justify-between items-center px-4 py-4 sm:px-6 hover:bg-gray-50 cursor-pointer ${openProjectId === project._id ? "bg-gray-50" : ""}`} onClick={(e) => toggleProject(project._id, e)}>
                 <div className="flex min-w-0 gap-x-4">
                   <div className="min-w-0 flex-1">
                     <p className="text-sm font-semibold text-gray-900 truncate">{project.clientName}</p>
@@ -70,7 +70,7 @@ const AllProjects = () => {
               </li>
               {openProjectId === project._id && (
                 <div className="px-4 pt-4 pb-2 sm:px-6 bg-gray-50">
-                  <h3 className="text-lg leading-6 font-medium text-gray-900">Project Details</h3>
+                  <h3 className="text-lg leading-6 font-medium text-gray-900 mb-4">Project Details</h3>
                   <ProjectDetails projectData={project} />
                 </div>
               )}

@@ -28,7 +28,9 @@ function MainTracker() {
 
   useEffect(() => {
     axios.get(`${apiUrl}/api/users/projects/${userID}`)
-      .then(response => setProjects(response.data))
+      .then(response => {
+        setProjects(response.data)
+      })
       .catch(error => console.error('Error fetching projects:', error));
   }, [userID]);
 
@@ -56,7 +58,8 @@ function MainTracker() {
 
   const saveTimeEntry = () => {
     const timeEntryData = {
-      employeeId: userID,
+      userID: `${userID ? userID : user._id }`,
+      employeeId: `${userID ? userID : user._id }`,
       projectId: selectedProject._id,
       taskId: selectedTask._id,
       date: selectedDate,
@@ -129,6 +132,7 @@ function MainTracker() {
           {showTaskOptions && (
             <ul className="absolute z-20 w-full bg-white border border-gray-300 mt-1 rounded-lg shadow-lg overflow-auto">
               {selectedProject && selectedProject.tasks.map((task) => (
+                
                 <li
                   key={task.id}
                   className="px-4 py-2 hover:bg-gray-100 cursor-pointer"
@@ -172,8 +176,8 @@ function MainTracker() {
           Save
         </button>
       </div>
-
       <div className="space-y-2">
+      {console.log(timeEntries)}
         {timeEntries.map((entry) => (
           <TimeEntry key={entry._id} {...entry} forceUpdate={forceUpdateKey} />
         ))}
